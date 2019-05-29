@@ -15,7 +15,7 @@ is almost no error handling and it WILL write (if selected) a Plex Playlist to y
 Even as a beginner I can see many things that can be improved in the code, but hey, it works.
 
 # What does it do: 
-Sorts an existing [movie] playlist (in ascending or descending order) on your Plex Server/Account
+Sorts (and creates a copy of) an existing [movie] playlist (in ascending or descending order) on your Plex Server/Account
 by either (1) Critic Rating, (2) Audience Rating, or (3) Combined Rating, depending on user input/choice.
 
 # Before use: 
