@@ -76,15 +76,8 @@ def create_Playlist(plex, title = "Sorted Playlist", list_type = 6, is_dry_run =
     for i in item:
         # Check if ratings exist. If they do not, set the value to 0 to avoid NoneType errors.
         # TODO: Add error handling / Create a better solution
-        if i.rating is None:
-            critic_rating = 0
-        else:
-            critic_rating = i.rating
-
-        if i.audienceRating is None:
-            audience_rating = 0
-        else:
-            audience_rating = i.audienceRating
+        critic_rating = i.rating or 0
+        audience_rating = i.audienceRating or 0
 
         # Combine the critic & audience ratings into a single rating score
         combined_rating = critic_rating + audience_rating
