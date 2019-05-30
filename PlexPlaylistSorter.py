@@ -19,10 +19,10 @@ Sorts (and creates a copy of) an existing [movie] playlist (in ascending or desc
 by either (1) Critic Rating, (2) Audience Rating, or (3) Combined Rating, depending on user input/choice.
 
 Before use:
-You need to change a couple of variables, starting with the PLEX_SERVER_URL (line 46)
-and the PLEX_TOKEN (line 47) --OR-- you can choose to use a config.ini file in which case you need to
+You need to change a couple of variables, starting with the PLEX_SERVER_URL (line 50)
+and the PLEX_TOKEN (line 51) --OR-- you can choose to use a config.ini file in which case you need to
 either store the file in the default location (~/.config/plexapi/config.ini) or update the PLEX_CONFIG_PATH
-variable (line 47) to where you have saved it i.e. "config.ini" if it's in the same folder as this script.
+variable (line 52) to where you have saved it i.e. "config.ini" if it's in the same folder as this script.
 
 For more information on how to structure your config.ini file check out the "Configuration" section in
 https://buildmedia.readthedocs.org/media/pdf/python-plexapi/stable/python-plexapi.pdf
