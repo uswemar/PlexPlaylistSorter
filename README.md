@@ -1,11 +1,11 @@
 # Plex Playlist Sorter
-Version: 1.0
+Version: 1.1
 
 URL: https://github.com/uswemar/PlexPlaylistSorter
 
 Python Version: 3.7
 
-Coded By: uswemar (http://reddit.com/u/swemar | https://github.com/uswemar)
+Author: uswemar (http://reddit.com/u/swemar | https://github.com/uswemar)
 
 
 # Disclaimer:
@@ -19,11 +19,15 @@ Sorts (and creates a copy of) an existing [movie] playlist (in ascending or desc
 by either (1) Critic Rating, (2) Audience Rating, or (3) Combined Rating, depending on user input/choice.
 
 # Before use: 
-You need to change a couple of variables, starting with the PLEX_SERVER_URL (line 178)
-and the PLEX_TOKEN (line 180). Additionally, you need to change 'plist[0].items()' (line 60)
-to match the index of the (original/source) playlist you want to sort i.e. if you only have
-one playlist it would be 'plist[0].items()' and if you have three playlists and you want to
-sort the third one it would be 'plist[2].items()' and so on. You get the point.
+You need to change a couple of variables, starting with the PLEX_SERVER_URL (line 46)
+and the PLEX_TOKEN (line 47) --OR-- you can choose to use a config.ini file in which case you need to
+either store the file in the default location (~/.config/plexapi/config.ini) or update the PLEX_CONFIG_PATH
+variable (line 47) to where you have saved it i.e. "config.ini" if it's in the same folder as this script.
+
+For more information on how to structure your config.ini file check out the "Configuration" section in
+https://buildmedia.readthedocs.org/media/pdf/python-plexapi/stable/python-plexapi.pdf
+How to find your Plex token:
+https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
 # Why:
 I created this because I wanted to sort my movie playlist by rating and there was no option in Plex
