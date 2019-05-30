@@ -1,5 +1,5 @@
 # Plex Playlist Sorter
-Version: 1.1
+Version: 1.1.0
 
 URL: https://github.com/uswemar/PlexPlaylistSorter
 
