@@ -1,33 +1,37 @@
 """
 
 Name: Plex Playlist Sorter
-Version: 1.0
+Version: 1.1
 URL: https://github.com/uswemar/PlexPlaylistSorter
 Python Version: 3.7
 
-Coded By: uswemar (http://reddit.com/u/swemar | https://github.com/uswemar)
+Author: uswemar (http://reddit.com/u/swemar | https://github.com/uswemar)
 
 
 Disclaimer:
-Use with care! The code is rough. Really rough. This is my first Python script and I wrote
+Use with caution! The code is rough. Really rough. This is my first Python script and I wrote
 it after sitting through a couple of hours of 'Python for Beginners' tutorials. There
 is almost no error handling and it WILL write (if selected) a Plex Playlist to your account.
 Even as a beginner I can see many things that can be improved in the code, but hey, it works.
 
-What does it do: 
+What does it do:
 Sorts (and creates a copy of) an existing [movie] playlist (in ascending or descending order) on your Plex Server/Account
 by either (1) Critic Rating, (2) Audience Rating, or (3) Combined Rating, depending on user input/choice.
 
-Before use: 
-You need to change a couple of variables, starting with the PLEX_SERVER_URL (line 178)
-and the PLEX_TOKEN (line 180). Additionally, you need to change 'plist[0].items()' (line 60)
-to match the index of the (original/source) playlist you want to sort i.e. if you only have
-one playlist it would be 'plist[0].items()' and if you have three playlists and you want to
-sort the third one it would be 'plist[2].items()' and so on. You get the point.
+Before use:
+You need to change a couple of variables, starting with the PLEX_SERVER_URL (line 46)
+and the PLEX_TOKEN (line 47) --OR-- you can choose to use a config.ini file in which case you need to
+either store the file in the default location (~/.config/plexapi/config.ini) or update the PLEX_CONFIG_PATH
+variable (line 47) to where you have saved it i.e. "config.ini" if it's in the same folder as this script.
+
+For more information on how to structure your config.ini file check out the "Configuration" section in
+https://buildmedia.readthedocs.org/media/pdf/python-plexapi/stable/python-plexapi.pdf
+How to find your Plex token:
+https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
 Why:
 I created this because I wanted to sort my movie playlist by rating and there was no option in Plex
-to do so. I was aware of Python and the Plex API so I knew it could be done but I had no 
+to do so. I was aware of Python and the Plex API so I knew it could be done but I had no
 practical knowledge of either so I scoured the web for instructions and/or finished solutions.
 After searching around endlessly online for a finished solution/script I confronted my laziness
 and decided to learn the basics of Python and create my own script. This was the result. Fin.
@@ -35,9 +39,28 @@ and decided to learn the basics of Python and create my own script. This was the
 """
 
 import requests
+import os
+from plexapi.utils import choose
 from plexapi.server import PlexServer
+from plexapi.config import PlexConfig
 
-def create_Playlist(plex, title = "Sorted Playlist", list_type = 6, is_dry_run = False):
+# Global variables
+#
+# EDIT THE PARAMS BELOW BEFORE USE
+PLEX_SERVER_URL = ""  # Leave blank if you're using a config.ini file
+PLEX_TOKEN = ""  # Leave blank if you're using a config.ini file
+PLEX_CONFIG_PATH = "config.ini"  # Leave blank if it's in the default directory
+
+# DO NOT EDIT ANYTHING BELOW THIS LINE
+if PLEX_CONFIG_PATH:
+    CONFIG = PlexConfig(os.environ.get("PLEXAPI_CONFIG_PATH", os.path.expanduser(PLEX_CONFIG_PATH)))
+if not PLEX_SERVER_URL:
+    PLEX_SERVER_URL = CONFIG.data['auth'].get('server_baseurl')
+if not PLEX_TOKEN:
+    PLEX_TOKEN = CONFIG.data['auth'].get('server_token')
+
+
+def create_Playlist(plex, plist, title="Sorted Playlist", list_type=6, is_dry_run=False):
     """
     Function: create_Playlist()
 
@@ -49,16 +72,6 @@ def create_Playlist(plex, title = "Sorted Playlist", list_type = 6, is_dry_run =
     :param is_dry_run: Default value = False (True if you want a dry-run)
     :return: A sorted playlist, saved on your Plex account.
     """
-
-    # Get a list[] of your playlists from Plex
-    plist = plex.playlists()
-
-    # Select the playlist you want to sort
-    # TODO: Make selectable via user input/choice, add error handling (what if the playlist doesn't contain movies?)
-    #
-    # Change plist[0] to match the playlist number you want to sort.
-    # [0] will sort your first playlist, [1] your second playlist, [2] your third etc.
-    item = plist[0].items()
 
     # Variables
     #
@@ -73,7 +86,7 @@ def create_Playlist(plex, title = "Sorted Playlist", list_type = 6, is_dry_run =
     audience_rating = 0
     sort_order = True
 
-    for i in item:
+    for i in plist:
         # Check if ratings exist. If they do not, set the value to 0 to avoid NoneType errors.
         # TODO: Add error handling / Create a better solution
         if i.rating is None:
@@ -143,6 +156,7 @@ def create_Playlist(plex, title = "Sorted Playlist", list_type = 6, is_dry_run =
         print(f"A new playlist called {title} has been created and saved.")
         plex.createPlaylist(title, new_list)
 
+
 def set_ssl_params():
     """
     Function: set_ssl_params
@@ -159,39 +173,31 @@ def set_ssl_params():
     requests.packages.urllib3.disable_warnings()
     return session
 
-def connect(ssl = False):
+
+def connect(ssl=False):
     """
 
     Function: connect()
 
     Will create and connect to a new Plex (Server) object which will be used in the rest of the script.
 
-    IMPORTANT: Variables 'baseurl' (your Plex Server URL) and 'token' must be set below before use!
-
-    How to find your Plex token:
-    https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
-
     :param ssl: Default value = False (Will disable SSL verification if True, might be needed if you use HTTPS)
     :return: plex (object)
     """
-
-    # Set this to your Plex Server IP & port i.e. http://localhost:32400 or https://192.168.1.1:32400 etc.
-    baseurl = 'https://localhost:32400' # PLEX_SERVER_URL
-    # Set this to your Plex token (see above for instructions on how to find it)
-    token = 'xxxxxxxxxxxxxxxxxxx' # PLEX_TOKEN
 
     # Checks if ssl is set to True or False and connects to the Plex Server.
     # If True, disables SSL verification and warnings.
     # If False (default), simply connects using baseurl and token.
     if ssl:
         session = set_ssl_params()
-        plex = PlexServer(baseurl, token, session)
+        plex = PlexServer(PLEX_SERVER_URL, PLEX_TOKEN, session)
     else:
-        plex = PlexServer(baseurl, token)
+        plex = PlexServer(PLEX_SERVER_URL, PLEX_TOKEN)
 
     return plex
 
-def get_Input():
+
+def get_Input(plex):
     """
     Function: get_Input()
 
@@ -205,23 +211,28 @@ def get_Input():
     # Asks user for the title of the new (to be sorted) playlist
     title = input("Title of the new playlist: ")
 
+    # Get a list[] of your playlists from Plex
+    plists = plex.playlists()
+
+    # Select the playlist you want to sort
+    plist_to_sort = choose("Select playlist to sort", plists, "title")
+    plist = plist_to_sort.items()
+
     # Prints out available options for sorting methods
     print("""
-    Select a list & sorting type:
     1: Critic rating, ascending order
     2: Critic rating, descending order
     3: Audience rating, ascending order
     4: Audience rating, descending order
     5: Combined rating, ascending order
     6: Combined rating, descending order
-    ######################################
     """)
 
     # Checks if the option entered is a number (integer) or not
     # TODO: Fix so that ONLY 1-6 can be selected.
     while True:
         try:
-            list_type = int(input("1-6: "))
+            list_type = int(input("Select a list & sorting type (1-6): "))
         except ValueError:
             print("You need to enter a number between 1-6. Try again.")
         else:
@@ -229,17 +240,15 @@ def get_Input():
 
     # Print out if user wants to run a test (dry-run) or create & save a new playlist in their Plex account.
     print("""
-    Select mode:
     1: Create a new playlist & save it
     2: Dry-run only, no changes will be made
-    ######################################
     """)
 
     # Checks if user wants run a test (dry-run) or not
     # TODO: Same as above, fix so that ONLY 1-2 can be selected.
     while True:
         try:
-            dry_num = int(input("1-2: "))
+            dry_num = int(input("Select mode (1-2): "))
         except ValueError:
             print("You need to enter a number between 1-2. Try again.")
         else:
@@ -254,7 +263,8 @@ def get_Input():
         print("Invalid response. Default (dry-run) mode selected.")
         is_dry_run = True
 
-    return title, list_type, is_dry_run
+    return plist, title, list_type, is_dry_run
+
 
 def main():
     """
@@ -270,10 +280,11 @@ def main():
     plex = connect(True)
 
     # Get user input variable from get_Input() function
-    title, list_type, is_dry_run = get_Input()
+    plist, title, list_type, is_dry_run = get_Input(plex)
 
     # Pass the above variables to the create_Playlist() function
-    create_Playlist(plex, title, list_type, is_dry_run)
+    create_Playlist(plex, plist, title, list_type, is_dry_run)
+
 
 if __name__ == "__main__":
     main()
