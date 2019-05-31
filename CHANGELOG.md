@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add argparse to be able to use the script both via CLI and interactively
 
 
+## [1.2.0] - 2019-05-31
+### Added
+- Some unreleased/work-in-progress code (placeholders)
+
+### Fixed 
+- Spelling/word choices
+
+### Changed
+- Optimized the code for handling missing ratings
+- List output during dry run
+
+
 ## [1.1.0] - 2019-05-30
 ### Added
 - Option to use a config.ini instead of adding auth values to main .py script
