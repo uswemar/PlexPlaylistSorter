@@ -1,7 +1,7 @@
 """
 
 Name: Plex Playlist Sorter
-Version: 1.1
+Version: 1.2.0
 URL: https://github.com/uswemar/PlexPlaylistSorter
 Python Version: 3.7
 
@@ -88,18 +88,13 @@ def create_Playlist(plex, plist, title="Sorted Playlist", list_type=6, is_dry_ru
 
     for i in plist:
         # Check if ratings exist. If they do not, set the value to 0 to avoid NoneType errors.
-        # TODO: Add error handling / Create a better solution
-        if i.rating is None:
-            critic_rating = 0
-        else:
-            critic_rating = i.rating
+        #
+        # Change Log v1.2.0:
+        #   Optimized this part of the code.
+        critic_rating = round(float(0 if i.rating is None else i.rating), 2)
+        audience_rating = round(float(0 if i.audienceRating is None else i.audienceRating), 2)
 
-        if i.audienceRating is None:
-            audience_rating = 0
-        else:
-            audience_rating = i.audienceRating
-
-        # Combine the critic & audience ratings into a single rating score
+        # Combine the critic & audience ratings into a combined rating score
         combined_rating = critic_rating + audience_rating
 
         # Set list type and sorting order based on user input (see function get_Input())
@@ -132,6 +127,7 @@ def create_Playlist(plex, plist, title="Sorted Playlist", list_type=6, is_dry_ru
     to_sort = sorted(to_sort.items(), reverse=sort_order, key=lambda x: x[1])
 
     # Add the sorted playlist/dictionary element to a new list[]
+    # TODO: Optimize/Merge this part
     final_list = []
     for elem in to_sort:
         final_list.append(elem[0])
@@ -149,13 +145,31 @@ def create_Playlist(plex, plist, title="Sorted Playlist", list_type=6, is_dry_ru
         print("")
         print("##### Dry-run #####")
         print(f"Title: {title}")
-        print(f"List type: {list_type}")
-        print("List output:")
-        print(new_list)
+        print(f"Type: {list_type}")
+        print("Result:")
+        print(to_sort)
     else:
         print(f"A new playlist called {title} has been created and saved.")
         plex.createPlaylist(title, new_list)
 
+
+def write_csv():
+    """
+
+    UNRELEASED
+    TODO: Add function to output results as a .csv
+
+    import csv
+
+    output_path = "path/output.csv" # r"win"
+    file = open(output_path, "w", newline="")
+    writer = csv.writer(file)
+    writer.writerow(["Title", "Rating", etc])
+
+    for o in range(len(list)):
+        obj = list[o]
+        writer.writerow([obj[0], obj[1], etc])
+    """
 
 def set_ssl_params():
     """
