@@ -1,5 +1,5 @@
 # Plex Playlist Sorter
-Version: 1.1.0
+Version: 1.2.0
 
 URL: https://github.com/uswemar/PlexPlaylistSorter
 
@@ -9,7 +9,7 @@ Author: uswemar (http://reddit.com/u/swemar | https://github.com/uswemar)
 
 
 # Disclaimer:
-Use with care! The code is rough. Really rough. This is my first Python script and I wrote
+Use with caution! The code is rough. Really rough. This is my first Python script and I wrote
 it after sitting through a couple of hours of 'Python for Beginners' tutorials. There
 is almost no error handling and it WILL write (if selected) a Plex Playlist to your account.
 Even as a beginner I can see many things that can be improved in the code, but hey, it works.
